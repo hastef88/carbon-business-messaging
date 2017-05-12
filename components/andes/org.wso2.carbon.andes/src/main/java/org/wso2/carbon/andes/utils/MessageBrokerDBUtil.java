@@ -21,7 +21,6 @@ package org.wso2.carbon.andes.utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
-import org.wso2.carbon.utils.CarbonUtils;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -86,7 +85,7 @@ public final class MessageBrokerDBUtil {
         if (dSetupValue != null) {
 
             //load necessary configurations
-            final String brokerConfigFilePath  = CarbonUtils.getCarbonConfigDirPath() + File.separator + "broker.xml";
+            final String brokerConfigFilePath  =  File.separator + "broker.xml"; //todo CarbonUtils.getCarbonConfigDirPath() +
 
             MBDatabaseConfig mbDatabaseConfig = new MBDatabaseConfig(brokerConfigFilePath);
 
@@ -157,22 +156,22 @@ public final class MessageBrokerDBUtil {
 
         LocalDatabaseCreator databaseCreator = new LocalDatabaseCreator(dataSource);
 
-        try {
-
-            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-                databaseCreator.createRegistryDatabase();
-            } else {
-                log.info("Message Broker database store already exists." +
-                        " Not creating a new database.");
-            }
-
-        } catch (ConfigurationException e) {
-            log.error("Unexpected error occurred while creating database: ", e);
-            throw new ConfigurationException("Unexpected error occurred while " +
-                    " creating database. ", e);
-        }
-
-        verifyRdbmsDatabase(databaseCreator);
+//        try {
+//
+//            if (!databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
+//                databaseCreator.createRegistryDatabase();
+//            } else {
+//                log.info("Message Broker database store already exists." +
+//                        " Not creating a new database.");
+//            }
+//
+//        } catch (ConfigurationException e) {
+//            log.error("Unexpected error occurred while creating database: ", e);
+//            throw new ConfigurationException("Unexpected error occurred while " +
+//                    " creating database. ", e);
+//        }
+//
+//        verifyRdbmsDatabase(databaseCreator);
 
     }
 
@@ -185,13 +184,13 @@ public final class MessageBrokerDBUtil {
      */
     private void verifyRdbmsDatabase(LocalDatabaseCreator databaseCreator) throws RuntimeException {
 
-        if (databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
-            log.info("Successfully sourced relevant sql files to database.");
-        } else {
-            log.error("Unable to read sourced database tables. Database not " +
-                    " successfully created.");
-            throw new RuntimeException("Unable to read sourced database tables. Database not " +
-                    " successfully created.");
-        }
+//        if (databaseCreator.isDatabaseStructureCreated(DB_CHECK_SQL)) {
+//            log.info("Successfully sourced relevant sql files to database.");
+//        } else {
+//            log.error("Unable to read sourced database tables. Database not " +
+//                    " successfully created.");
+//            throw new RuntimeException("Unable to read sourced database tables. Database not " +
+//                    " successfully created.");
+//        }
     }
 }

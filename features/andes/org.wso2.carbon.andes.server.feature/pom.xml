@@ -39,38 +39,38 @@
             <groupId>org.wso2.carbon.messaging</groupId>
             <artifactId>org.wso2.carbon.andes</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.authentication</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.authorization</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.admin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.event.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.messaging</groupId>
-            <artifactId>org.wso2.carbon.andes.event.admin</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.authentication</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.authorization</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.commons</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.cluster.mgt</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.admin</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.event.core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.messaging</groupId>-->
+            <!--<artifactId>org.wso2.carbon.andes.event.admin</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.wso2.andes.wso2</groupId>
             <artifactId>andes</artifactId>
@@ -87,10 +87,10 @@
             <groupId>com.googlecode.cqengine</groupId>
             <artifactId>cqengine</artifactId>
         </dependency>
-		<dependency>
-		    <groupId>de.javakaffee</groupId>
-		    <artifactId>kryo-serializers</artifactId>
-		</dependency>
+		<!--<dependency>-->
+		    <!--<groupId>de.javakaffee</groupId>-->
+		    <!--<artifactId>kryo-serializers</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 		    <groupId>com.esotericsoftware</groupId>
 		    <artifactId>kryo</artifactId>
@@ -181,10 +181,10 @@
             <groupId>org.apache.axis2.transport</groupId>
             <artifactId>axis2-transport-rabbitmq-amqp</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon.identity</groupId>
-            <artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.wso2.carbon.identity</groupId>-->
+            <!--<artifactId>org.wso2.carbon.identity.oauth.stub</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
@@ -276,72 +276,137 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
-                <groupId>org.wso2.maven</groupId>
-                <artifactId>carbon-p2-plugin</artifactId>
-                <version>${carbon.p2.plugin.version}</version>
+                <groupId>org.wso2.carbon.maven</groupId>
+                <artifactId>carbon-feature-plugin</artifactId>
+                <version>${carbon.feature.plugin.version}</version>
+                <extensions>true</extensions>
                 <executions>
                     <execution>
-                        <id>4-p2-feature-generation</id>
-                        <phase>package</phase>
+                        <id>1-p2-feature-generation</id>
                         <goals>
-                            <goal>p2-feature-gen</goal>
+                            <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <id>org.wso2.carbon.andes.server</id>
-                            <propertiesFile>../etc/feature.properties</propertiesFile>
-                            <adviceFile>
-                                <properties>
-                                    <propertyDef>org.wso2.carbon.p2.category.type:server
-                                    </propertyDef>
-                                    <propertyDef>org.eclipse.equinox.p2.type.group:false
-                                    </propertyDef>
-                                </properties>
-                            </adviceFile>
+                            <propertyFile>../etc/feature.properties</propertyFile>
+                            <adviceFileContents>
+                                <advice>
+                                    <name>org.wso2.carbon.p2.category.type</name>
+                                    <value>server</value>
+                                </advice>
+                                <advice>
+                                    <name>org.eclipse.equinox.p2.type.group</name>
+                                    <value>false</value>
+                                </advice>
+                            </adviceFileContents>
                             <bundles>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.authentication:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.authorization:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.commons:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.core:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.admin:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.core:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.event.admin:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.messaging:org.wso2.carbon.andes.cluster.mgt:${carbon.messaging.version}</bundleDef>
-                                <bundleDef>org.wso2.andes.wso2:andes:${andes.dependency.version}</bundleDef>
-                                <bundleDef>org.wso2.orbit.com.lmax:disruptor</bundleDef>
-								<bundleDef>com.googlecode.cqengine:cqengine:${cqengine.version}</bundleDef>
-								<bundleDef>de.javakaffee:kryo-serializers:${kryo-serializers.version}</bundleDef>
-								<bundleDef>com.esotericsoftware:kryo:${kryo.version}</bundleDef>
-								<bundleDef>com.esotericsoftware:minlog:${minlog.version}</bundleDef>
-								<bundleDef>com.googlecode.concurrent-trees:concurrent-trees:${concurrent-trees.version}</bundleDef>
-								<bundleDef>org.objenesis:objenesis:${objenesis.version}</bundleDef>
-								<bundleDef>com.esotericsoftware:reflectasm:${reflectasm.version}</bundleDef>
-								<bundleDef>org.ow2.asm:asm:${asm.version}</bundleDef>
-								<bundleDef>org.javassist:javassist:${javassist.version}</bundleDef>
-								<bundleDef>org.antlr:antlr4-runtime:${antlr4-runtime.version}</bundleDef>
-								<bundleDef>org.xerial:sqlite-jdbc:${sqlite-jdbc.version}</bundleDef>
-								<bundleDef>com.google.protobuf:protobuf-java:${protobuf-java.version}</bundleDef>
-                                <bundleDef>commons-cli.wso2:commons-cli</bundleDef>
-                                <bundleDef>commons-configuration:commons-configuration</bundleDef>
-                                <bundleDef>commons-digester.wso2:commons-digester</bundleDef>
-                                <bundleDef>commons-beanutils.wso2:commons-beanutils</bundleDef>
-                                <bundleDef>com.google.guava:guava</bundleDef>
-                                <bundleDef>io.netty.wso2:netty-all</bundleDef>
-                                <bundleDef>libthrift.wso2:libthrift</bundleDef>
-                                <bundleDef>org.apache.axis2.transport:axis2-transport-jms:${axis2.transport.jms.version}</bundleDef>
-                                <bundleDef>org.apache.axis2.transport:axis2-transport-rabbitmq-amqp:${axis2.transport.rabbitmq.amqp.version}</bundleDef>
-                                <bundleDef>org.wso2.carbon.identity:org.wso2.carbon.identity.oauth.stub:${carbon.identity.oauth.stub.version}</bundleDef>
-                                <bundleDef>org.apache.commons:commons-pool2:${org.apache.commons.pool.version}</bundleDef>
+                                <bundle>
+                                    <symbolicName>org.wso2.carbon.andes</symbolicName>
+                                    <version>${carbon.business.messaging.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>andes</symbolicName>
+                                    <version>${andes.dependency.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>disruptor</symbolicName>
+                                    <version>${disruptor.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>cqengine</symbolicName>
+                                    <version>${cqengine.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>de.javakaffee.kryo-serializers</symbolicName>
+                                    <version>${kryo-serializers.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.esotericsoftware.minlog</symbolicName>
+                                    <version>${minlog.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>concurrent-trees</symbolicName>
+                                    <version>${concurrent-trees.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.esotericsoftware.reflectasm</symbolicName>
+                                    <version>${reflectasm.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.objectweb.asm</symbolicName>
+                                    <version>${asm.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>javassist</symbolicName>
+                                    <version>${javassist.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.antlr.antlr4-runtime-osgi</symbolicName>
+                                    <version>${antlr4-runtime.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.xerial.sqlite-jdbc</symbolicName>
+                                    <version>${sqlite-jdbc.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.protobuf</symbolicName>
+                                    <version>${protobuf-java.version}</version>
+                                </bundle>
+                                <!--<bundle>-->
+                                    <!--<symbolicName>commons-cli</symbolicName>-->
+                                    <!--<version>${commons-cli.version}</version>-->
+                                <!--</bundle>-->
+                                <bundle>
+                                    <symbolicName>org.apache.commons.configuration</symbolicName>
+                                    <version>${commons-configuration.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>commons-digester</symbolicName>
+                                    <version>${commons-digester.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>commons-beanutils</symbolicName>
+                                    <version>${commons-beanutils.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>com.google.guava</symbolicName>
+                                    <version>${guava.bundle.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>netty-all</symbolicName>
+                                    <version>${netty-all.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>libthrift</symbolicName>
+                                    <version>${libthrift.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>axis2-transport-jms</symbolicName>
+                                    <version>${axis2.transport.jms.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>axis2-transport-rabbitmq-amqp</symbolicName>
+                                    <version>${axis2.transport.rabbitmq.amqp.version}</version>
+                                </bundle>
+                                <bundle>
+                                    <symbolicName>org.apache.commons.pool2</symbolicName>
+                                    <version>${org.apache.commons.pool.version}</version>
+                                </bundle>
+
                             </bundles>
-                            <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core.server:${carbon.kernel.version}
-                                </importFeatureDef>
-                            </importFeatures>
+                            <!--<importFeatures>-->
+                                <!--<importFeature>-->
+                                    <!--<feature>org.wso2.carbon.core.server</feature>-->
+                                    <!--<version>${carbon.kernel.version}</version>-->
+                                    <!--&lt;!&ndash;org.wso2.carbon.core.server:${carbon.kernel.version}&ndash;&gt;-->
+                                <!--</importFeature>-->
+                            <!--</importFeatures>-->
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>

@@ -18,15 +18,18 @@
 
 package org.wso2.carbon.andes.internal;
 
-import com.hazelcast.core.HazelcastInstance;
-import org.apache.axis2.clustering.ClusteringAgent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferenceCardinality;
+import org.osgi.service.component.annotations.ReferencePolicy;
 import org.wso2.andes.configuration.AndesConfigurationManager;
 import org.wso2.andes.configuration.enums.AndesConfiguration;
+import org.wso2.andes.configuration.qpid.ServerConfiguration;
 import org.wso2.andes.kernel.AndesContext;
 import org.wso2.andes.kernel.AndesException;
 import org.wso2.andes.kernel.AndesKernelBoot;
@@ -39,18 +42,13 @@ import org.wso2.carbon.andes.authentication.service.AuthenticationService;
 import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
 import org.wso2.carbon.andes.event.core.qpid.QpidServerDetails;
 import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
-import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
+//import org.wso2.carbon.andes.listeners.MessageBrokerTenantManagementListener;
 import org.wso2.carbon.andes.service.QpidService;
 import org.wso2.carbon.andes.service.QpidServiceImpl;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
 import org.wso2.carbon.andes.utils.MessageBrokerDBUtil;
-import org.wso2.carbon.base.ServerConfiguration;
-import org.wso2.carbon.base.api.ServerConfigurationService;
-import org.wso2.carbon.core.ServerRestartHandler;
-import org.wso2.carbon.core.ServerShutdownHandler;
-import org.wso2.carbon.server.admin.common.IServerAdmin;
-import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
-import org.wso2.carbon.utils.ConfigurationContextService;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
+//import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -62,50 +60,10 @@ import javax.management.MBeanServer;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
-/**
- * @scr.component name="org.wso2.carbon.andes.internal.QpidServiceComponent"
- * immediate="true"
- * @scr.reference name="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * interface="org.wso2.carbon.andes.authentication.service.AuthenticationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setAccessKey"
- * unbind="unsetAccessKey"
- * @scr.reference name="org.wso2.andes.wso2.service.QpidNotificationService"
- * interface="org.wso2.andes.wso2.service.QpidNotificationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setQpidNotificationService"
- * unbind="unsetQpidNotificationService"
- * @scr.reference name="server.configuration"
- * interface="org.wso2.carbon.base.api.ServerConfigurationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setServerConfiguration"
- * unbind="unsetServerConfiguration"
- * @scr.reference name="event.broker"
- * interface="org.wso2.carbon.andes.event.core.EventBundleNotificationService"
- * cardinality="1..1"
- * policy="dynamic"
- * bind="setEventBundleNotificationService"
- * unbind="unsetEventBundleNotificationService"
- * @scr.reference name="hazelcast.instance.service"
- * interface="com.hazelcast.core.HazelcastInstance"
- * cardinality="0..1"
- * policy="dynamic"
- * bind="setHazelcastInstance"
- * unbind="unsetHazelcastInstance"
- * @scr.reference name="config.context.service"
- * interface="org.wso2.carbon.utils.ConfigurationContextService"
- * cardinality="1..1" policy="dynamic"
- * bind="setConfigurationContextService"
- * unbind="unsetConfigurationContextService"
- * @scr.reference name="org.wso2.carbon.server.admin.common.IServerAdmin"
- * interface="org.wso2.carbon.server.admin.common.IServerAdmin"
- * cardinality="1..1" policy="dynamic"
- * bind="setIServerAdmin"
- * unbind="unsetIServerAdmin"
- */
+@Component(
+        name = "org.wso2.carbon.andes.internal.QpidServiceComponent",
+        immediate = true
+)
 public class QpidServiceComponent {
 
     private static final Log log = LogFactory.getLog(QpidServiceComponent.class);
@@ -135,6 +93,23 @@ public class QpidServiceComponent {
      */
     private QpidServiceImpl qpidServiceImpl;
 
+    @Reference(
+            name = "org.wso2.carbon.datasource.DataSourceService",
+            service = DataSourceService.class,
+            cardinality = ReferenceCardinality.AT_LEAST_ONE,
+            policy = ReferencePolicy.DYNAMIC,
+            unbind = "unregisterDataSourceService"
+    )
+    private void registerDataService(DataSourceService dataSourceService) {
+        QpidServiceDataHolder.getInstance().setDataSourceService(dataSourceService);
+    }
+
+    private void unregisterDataSourceService(DataSourceService dataSourceService) {
+        QpidServiceDataHolder.getInstance().setDataSourceService(null);
+    }
+
+    
+
     protected void activate(ComponentContext context) throws AndesException {
         try {
 
@@ -148,9 +123,10 @@ public class QpidServiceComponent {
 
             // Register tenant management listener for Message Broker
             bundleContext = context.getBundleContext();
-            MessageBrokerTenantManagementListener tenantManagementListener = new
-                    MessageBrokerTenantManagementListener();
-            registrations.push(bundleContext.registerService(TenantMgtListener.class.getName(), tenantManagementListener, null));
+//            MessageBrokerTenantManagementListener tenantManagementListener = new
+//                    MessageBrokerTenantManagementListener();
+            //TODO tenancy ???
+//            registrations.push(bundleContext.registerService(TenantMgtListener.class.getName(), tenantManagementListener, null));
 
             // set message store and andes context store related configurations
             AndesContext.getInstance().constructStoreConfiguration();
@@ -185,15 +161,15 @@ public class QpidServiceComponent {
                 throw new ConfigurationException("Invalid value " + mode + " for deployment/mode in broker.xml");
             }
 
-            MBShutdownHandler mbShutdownHandler = new MBShutdownHandler();
-            registrations.push(bundleContext.registerService(
-                    ServerShutdownHandler.class.getName(), mbShutdownHandler, null));
-            registrations.push(bundleContext.registerService(
-                    ServerRestartHandler.class.getName(), mbShutdownHandler, null));
+//            MBShutdownHandler mbShutdownHandler = new MBShutdownHandler();
+//            registrations.push(bundleContext.registerService(
+//                    ServerShutdownHandler.class.getName(), mbShutdownHandler, null));
+//            registrations.push(bundleContext.registerService(
+//                    ServerRestartHandler.class.getName(), mbShutdownHandler, null));
 
         } catch (ConfigurationException e) {
             log.error("Invalid configuration found in a configuration file", e);
-            this.shutdown();
+//            this.shutdown();
         }
 
     }
@@ -225,13 +201,13 @@ public class QpidServiceComponent {
     protected void unsetQpidNotificationService(QpidNotificationService qpidNotificationService) {
     }
 
-    protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
-        QpidServiceDataHolder.getInstance().setCarbonConfiguration(serverConfiguration);
-    }
-
-    protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
-        QpidServiceDataHolder.getInstance().setCarbonConfiguration(null);
-    }
+//    protected void setServerConfiguration(ServerConfigurationService serverConfiguration) {
+//        QpidServiceDataHolder.getInstance().setCarbonConfiguration(serverConfiguration);
+//    }
+//
+//    protected void unsetServerConfiguration(ServerConfigurationService serverConfiguration) {
+//        QpidServiceDataHolder.getInstance().setCarbonConfiguration(null);
+//    }
 
     protected void setEventBundleNotificationService(EventBundleNotificationService eventBundleNotificationService) {
         QpidServiceDataHolder.getInstance().registerEventBundleNotificationService(eventBundleNotificationService);
@@ -241,72 +217,6 @@ public class QpidServiceComponent {
         // unsetting
     }
 
-    /**
-     * Access Hazelcast Instance, which is exposed as an OSGI service.
-     *
-     * @param hazelcastInstance hazelcastInstance found from the OSGI service
-     */
-    protected void setHazelcastInstance(HazelcastInstance hazelcastInstance) throws AndesException {
-        HazelcastAgent.getInstance().init(hazelcastInstance);
-        registeredHazelcast = true;
-
-        if (brokerShouldBeStarted) {
-            //Start the broker if the activate method of QpidServiceComponent is blocked until hazelcastInstance
-            // getting registered
-            try {
-                this.startAndesBroker();
-            } catch (ConfigurationException e) {
-                log.error("Invalid configuration found in a configuration file", e);
-                this.shutdown();
-            }
-        }
-    }
-
-    protected void unsetHazelcastInstance(HazelcastInstance hazelcastInstance) {
-    }
-
-    /**
-     * Access ConfigurationContextService, which is exposed as an OSGI service, to read cluster configuration.
-     *
-     * @param configurationContextService ConfigurationContextService from the OSGI service
-     */
-    protected void setConfigurationContextService(ConfigurationContextService configurationContextService) {
-        ClusteringAgent agent = configurationContextService.getServerConfigContext().getAxisConfiguration()
-                .getClusteringAgent();
-        AndesContext.getInstance().setClusteringEnabled(agent != null);
-    }
-
-    protected void unsetConfigurationContextService(ConfigurationContextService configurationContextService) {
-        // Do nothing
-    }
-
-    /**
-     * Access IServerAdmin, which is exposed as an OSGi service, to call the graceful shutdown method in the carbon
-     * kernel.
-     */
-    protected void setIServerAdmin(IServerAdmin iServerAdmin) {
-        QpidServiceDataHolder.getInstance().setService(iServerAdmin);
-    }
-
-    /**
-     * Unset IServerAdmin OSGi service
-     */
-    protected void unsetIServerAdmin(IServerAdmin iServerAdmin) {
-        QpidServiceDataHolder.getInstance().setService(null);
-    }
-
-    /**
-     * Shutdown from the carbon kernel level.
-     */
-    private void shutdown() throws AndesException {
-        //Calling carbon kernel shutdown method, inside the ServerAdmin component
-        try {
-            QpidServiceDataHolder.getInstance().getService().shutdownGracefully();
-        } catch (Exception e) {
-            log.error("Error occurred while shutting down", e);
-            throw new AndesException("Error occurred while shutting down", e);
-        }
-    }
 
     /**
      * Check if the broker is up and running
@@ -332,9 +242,8 @@ public class QpidServiceComponent {
     }
 
     private int readPortOffset() {
-        ServerConfiguration carbonConfig = ServerConfiguration.getInstance();
         String portOffset = System.getProperty("portOffset",
-                carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET));
+                "0"); //todo carbonConfig.getFirstProperty(CARBON_CONFIG_PORT_OFFSET)
         try {
             return ((portOffset != null) ? Integer.parseInt(portOffset.trim()) : CARBON_DEFAULT_PORT_OFFSET);
         } catch (NumberFormatException e) {
@@ -543,31 +452,31 @@ public class QpidServiceComponent {
         }
     }
 
-    /**
-     * Private class containing the tasks that need to be done at server shut down
-     */
-    private static class MBShutdownHandler implements ServerShutdownHandler, ServerRestartHandler {
-        @Override
-        public void invoke() {
-
-            try {
-                //executing pre-shutdown work for registered listeners before shutting down the andes server
-                for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
-                                                                           .getBrokerLifecycleListeners()){
-                    listener.onShuttingdown();
-                }
-
-                AndesKernelBoot.shutDownAndesKernel();
-
-                //executing post-shutdown work for registered listeners after shutting down the andes server
-                for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
-                                                                           .getBrokerLifecycleListeners()){
-                    listener.onShutdown();
-                }
-            } catch (AndesException e) {
-                log.error("Error while shutting down Andes kernel. ", e);
-            }
-        }
-    }
+//    /**
+//     * Private class containing the tasks that need to be done at server shut down
+//     */
+//    private static class MBShutdownHandler implements ServerShutdownHandler, ServerRestartHandler {
+//        @Override
+//        public void invoke() {
+//
+//            try {
+//                //executing pre-shutdown work for registered listeners before shutting down the andes server
+//                for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
+//                                                                           .getBrokerLifecycleListeners()){
+//                    listener.onShuttingdown();
+//                }
+//
+//                AndesKernelBoot.shutDownAndesKernel();
+//
+//                //executing post-shutdown work for registered listeners after shutting down the andes server
+//                for(BrokerLifecycleListener listener: QpidServiceDataHolder.getInstance()
+//                                                                           .getBrokerLifecycleListeners()){
+//                    listener.onShutdown();
+//                }
+//            } catch (AndesException e) {
+//                log.error("Error while shutting down Andes kernel. ", e);
+//            }
+//        }
+//    }
 
 }

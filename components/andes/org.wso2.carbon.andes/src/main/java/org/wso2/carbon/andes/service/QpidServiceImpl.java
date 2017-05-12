@@ -31,8 +31,6 @@ import org.wso2.carbon.andes.commons.registry.RegistryClientException;
 import org.wso2.carbon.andes.internal.QpidServiceDataHolder;
 import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
-import org.wso2.carbon.utils.ServerConstants;
-import org.wso2.carbon.utils.CarbonUtils;
 
 import java.io.File;
 import java.net.InetAddress;
@@ -308,7 +306,7 @@ public class QpidServiceImpl implements QpidService {
         if (qpidPath != null) {
             QPID_CONF_DIR = Paths.get(qpidPath).toString();
         }
-        return System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR;
+        return "dummyPath";// todo System.getProperty(ServerConstants.CARBON_HOME) + QPID_CONF_DIR;
     }
 
     /**

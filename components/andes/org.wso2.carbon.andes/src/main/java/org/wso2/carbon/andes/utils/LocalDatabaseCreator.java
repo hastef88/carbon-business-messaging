@@ -21,7 +21,6 @@ package org.wso2.carbon.andes.utils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.andes.service.exception.ConfigurationException;
-import org.wso2.carbon.utils.dbcreator.DatabaseCreator;
 
 import javax.sql.DataSource;
 import java.io.File;
@@ -32,7 +31,7 @@ import java.sql.SQLException;
  * This class contain methods to create database tables
  * for mb store based on given DataSource Configurations.
  */
-public class LocalDatabaseCreator extends DatabaseCreator {
+public class LocalDatabaseCreator {
 
     private static final Log log = LogFactory.getLog(LocalDatabaseCreator.class);
     private DataSource dataSource;
@@ -42,7 +41,7 @@ public class LocalDatabaseCreator extends DatabaseCreator {
      * @param dataSource
      */
     public LocalDatabaseCreator(DataSource dataSource) {
-        super(dataSource);
+        //super(dataSource);
         this.dataSource = dataSource;
     }
 
@@ -56,33 +55,33 @@ public class LocalDatabaseCreator extends DatabaseCreator {
         String databaseType;
         File scriptFile;
 
-        try {
+//        try {
+//
+//            databaseType = DatabaseCreator.getDatabaseType(this.dataSource.getConnection());
+//            String scriptPath = getDbScriptLocation(databaseType);
+//            scriptFile = new File(scriptPath);
+//
+//        } catch (Exception e) {
+//            log.error("Unexpected error occurred while connecting to the database.", e);
+//            throw new ConfigurationException("Unexpected error occurred while connecting to" +
+//                                             " the database.", e);
+//        }
 
-            databaseType = DatabaseCreator.getDatabaseType(this.dataSource.getConnection());
-            String scriptPath = getDbScriptLocation(databaseType);
-            scriptFile = new File(scriptPath);
 
-        } catch (Exception e) {
-            log.error("Unexpected error occurred while connecting to the database.", e);
-            throw new ConfigurationException("Unexpected error occurred while connecting to" +
-                                             " the database.", e);
-        }
-
-
-        if (scriptFile.canRead()) {
-
-            try {
-                super.createRegistryDatabase();
-            } catch (Exception e) { // Carbon throws Exception.
-                log.error("Unexpected error occurred while creating the database tables.", e);
-                throw new ConfigurationException("Unexpected error occurred while creating the" +
-                                                 " database tables.", e);
-            }
-
-        } else {
-            log.error("Unexpected error occurred while reading db script : " + scriptFile);
-            throw new ConfigurationException("Unexpected error occurred while reading db script");
-        }
+//        if (scriptFile.canRead()) {
+//
+//            try {
+//                super.createRegistryDatabase();
+//            } catch (Exception e) { // Carbon throws Exception.
+//                log.error("Unexpected error occurred while creating the database tables.", e);
+//                throw new ConfigurationException("Unexpected error occurred while creating the" +
+//                                                 " database tables.", e);
+//            }
+//
+//        } else {
+//            log.error("Unexpected error occurred while reading db script : " + scriptFile);
+//            throw new ConfigurationException("Unexpected error occurred while reading db script");
+//        }
     }
 
     /**

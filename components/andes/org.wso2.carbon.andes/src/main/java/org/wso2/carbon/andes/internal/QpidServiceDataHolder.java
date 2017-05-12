@@ -19,9 +19,8 @@
 package org.wso2.carbon.andes.internal;
 
 import org.wso2.carbon.andes.listeners.BrokerLifecycleListener;
-import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.andes.event.core.EventBundleNotificationService;
-import org.wso2.carbon.server.admin.common.IServerAdmin;
+import org.wso2.carbon.datasource.core.api.DataSourceService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,32 +33,33 @@ public class QpidServiceDataHolder {
     private static QpidServiceDataHolder instance = new QpidServiceDataHolder();
 
     private String accessKey = null;
-    private ServerConfigurationService carbonConfiguration = null;
+//    private ServerConfigurationService carbonConfiguration = null;
     private EventBundleNotificationService eventBundleNotificationService;
     private List<BrokerLifecycleListener> brokerLifecycleListeners = new ArrayList<>();
+    private DataSourceService dataSourceService;
 
     /**
      * This OSGi service is used in the situation where we need to shutdown from the carbon kernel.
      */
-    private IServerAdmin service;
+//    private IServerAdmin service;
 
     /**
      * Get IServerAdmin that was stored when the bundle started up
      *
      * @return
      */
-    public IServerAdmin getService() {
-        return service;
-    }
+//    public IServerAdmin getService() {
+//        return service;
+//    }
 
     /**
      * Store IServerAdmin; that was received when the bundle started up
      *
-     * @param service
+//     * @param service
      */
-    public void setService(IServerAdmin service) {
-        this.service = service;
-    }
+//    public void setService(IServerAdmin service) {
+//        this.service = service;
+//    }
 
     private QpidServiceDataHolder() {
     }
@@ -86,23 +86,23 @@ public class QpidServiceDataHolder {
         return accessKey;
     }
 
-    /**
-        * Set Carbon ServerConfiguration instance
-        *
-        * @param carbonConfiguration
-        */
-    public void setCarbonConfiguration(ServerConfigurationService carbonConfiguration) {
-        this.carbonConfiguration = carbonConfiguration;
-    }
+//    /**
+//        * Set Carbon ServerConfiguration instance
+//        *
+//        * @param carbonConfiguration
+//        */
+//    public void setCarbonConfiguration(ServerConfigurationService carbonConfiguration) {
+//        this.carbonConfiguration = carbonConfiguration;
+//    }
 
-    /**
-        * Get Carbon ServerConfiguration instance
-        *
-        * @return
-        */
-    public ServerConfigurationService getCarbonConfiguration() {
-        return carbonConfiguration;
-    }
+//    /**
+//        * Get Carbon ServerConfiguration instance
+//        *
+//        * @return
+//        */
+//    public ServerConfigurationService getCarbonConfiguration() {
+//        return carbonConfiguration;
+//    }
 
     public void registerEventBundleNotificationService(
                       EventBundleNotificationService eventBundleNotificationService){
@@ -130,5 +130,9 @@ public class QpidServiceDataHolder {
     public void setBrokerLifecycleListeners(List<BrokerLifecycleListener> brokerLifecycleListeners)
     {
         this.brokerLifecycleListeners = brokerLifecycleListeners;
+    }
+
+    public void setDataSourceService(DataSourceService dataSourceService) {
+        this.dataSourceService = dataSourceService;
     }
 }
